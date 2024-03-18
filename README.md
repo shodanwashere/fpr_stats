@@ -46,7 +46,7 @@ To install just do :
 ### Changes by Shodan
 The script will no longer display detailed information on screen. It will only show the total number of vulnerabilities present. If you want the comprehensive explanation now, use the following command:
 ```plaintext
-$ bash extract.bash -f scan.fpr --expand
+$ bash extract.bash -f scan.fpr -e
 ```
 
 Disclaimer: This script was made by [pt4tech](https://github.com/tarrinho) for his own purposes, and I've adapted it to mine. There is no warranty associated to this script. If you want it to work in different ways, change them yourself.
