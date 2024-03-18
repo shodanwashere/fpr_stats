@@ -1,5 +1,5 @@
 **Fortify FPR file extractor**
-
+### by [pt4tech](https://github.com/tarrinho)
 I've started using Fortify to analyse the code of our applications. Like every Software Developement Life Cycle (SDLC) we needed to get the result during the pipeline, but the image that we are using doesn't have the FPRUtility.
 
 ```plaintext
@@ -43,5 +43,10 @@ I saw in my investigations this logic and decided to use it in my code. If you h
 To install just do :
 > apt get install unzip xmllint bc -y
 
-Disclaimer: This script was made by me for me. It is provided “as is” without any warranty whatsoever, including accuracy and comprehensiveness.  
-The copyright holder of this code may change the contents of this code at any time without prior notice, and the copyright holder disclaims any liability in relation to the recipient’s use of this code.
+### Changes by Shodan
+The script will no longer display detailed information on screen. It will only show the total number of vulnerabilities present. If you want the comprehensive explanation now, use the following command:
+```plaintext
+$ bash extract.bash -f scan.fpr --expand
+```
+
+Disclaimer: This script was made by [pt4tech](https://github.com/tarrinho) for his own purposes, and I've adapted it to mine. There is no warranty associated to this script. If you want it to work in different ways, change them yourself.
