@@ -16,20 +16,24 @@ Help()
    echo "options:"
    echo "h     Print this Help."
    echo "f     filename.fpr - file to be analyzed"
+   echo "e     Expand the output"
    echo
 }
-
+expand=0
 ############################################################
 # Process the input options. Add options as needed.        #
 ############################################################
 # Get the options
-while getopts ":hf:" option; do
+while getopts ":hef:" option; do
    case $option in
       h) # display Help
          Help
          exit;;
       f) # Enter a filename
-	 filename=$OPTARG;;
+	       filename=$OPTARG;;
+      e) # Expand
+      	 expand=1
+         :;;
       \?) # Invalid option
 	 echo "Error: Invalid option"
 	 Help
@@ -57,7 +61,11 @@ app_name=`cat audit.fvdl | grep -i "<BuildID>" | cut -d '>' -f 2 | cut -d '<' -f
 #echo "$app_name"
 
 n_vulns=`cat audit.fvdl | xmllint --xpath "//*/*[local-name()='Vulnerabilities']" - | grep "<Vulnerability>" | wc -l | xargs`
-echo "Found $n_vulns vulnerabilities"
+if (( $expand )); then
+	echo "Found $n_vulns vulnerabilities"
+else
+	echo $n_vulns
+fi
 
 # We now have the vulnerabilities references
 declare -a vulns
@@ -104,12 +112,18 @@ done
 # clean up
 `rm -f audit.fvdl`
 
-echo "The $app_name has $vuln_critical critical vulns and $vuln_high high, ones!"
+if (( $expand )); then
+	echo "The $app_name has $vuln_critical critical vulns and $vuln_high high, ones!"
+fi
 if [ $vuln_critical -gt 0 ] ||  [ $vuln_high -gt 0 ] 
    then
-	   echo "Pipeline should break!"
+     if (( $expand )); then
+               echo "Pipeline should break!"
+           fi
 	   exit 1;
    else
-	   echo "Pipeline can go forward!"
+     if (( $expand )); then
+               echo "Pipeline can go forward!"
+	   fi
 	   exit 0;
 fi
