@@ -78,7 +78,7 @@ app_name=`cat audit.fvdl | grep -i "<BuildID>" | cut -d '>' -f 2 | cut -d '<' -f
 n_vulns=`cat audit.fvdl | xmllint --xpath "//*/*[local-name()='Vulnerabilities']" - | grep "<Vulnerability>" | wc -l | xargs`
 if (( $expand )); then
 	echo "Found $n_vulns vulnerabilities"
-elif [[ ! $expand && ($category  -eq "") ]]; then
+elif [[ $expand = 0 && $cat = 0 ]]; then
 	echo $n_vulns
 fi
 
@@ -129,7 +129,7 @@ done
 
 if (( $expand )); then
 	echo "The $app_name has $vuln_critical critical vulns and $vuln_high high, ones!"
-elif [ $category != "" ]; then
+elif [[ $category != "" ]]; then
 	case $category in
  		"Critical") echo $vuln_critical;;
    	"High") echo $vuln_high;;
