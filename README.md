@@ -49,4 +49,10 @@ The script will no longer display detailed information on screen. It will only s
 $ bash extract.bash -f scan.fpr -e
 ```
 
+You can also, instead, obtain vulnerabilities by classification `(Critical|High|Medium|Low)`:
+```plaintext
+$ bash extract.bash -f scan.fpr -c Critical
+$ bash extract.bash -f scan.fpr -c High
+```
+
 Disclaimer: This script was made by [pt4tech](https://github.com/tarrinho) for his own purposes, and I've adapted it to mine. There is no warranty associated to this script. If you want it to work in different ways, change them yourself.

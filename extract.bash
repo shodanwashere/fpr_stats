@@ -16,21 +16,27 @@ Help()
    echo "options:"
    echo "h     Print this Help."
    echo "f     filename.fpr - file to be analyzed"
-   echo "e     Expand the output"
+   echo "e     (Optional) Expand the output"
+   echo "c     (Optional) Critical|High|Medium|Low - Select a class of vulnerability to show"
    echo
 }
 expand=0
+cat=0
+category=""
 ############################################################
 # Process the input options. Add options as needed.        #
 ############################################################
 # Get the options
-while getopts ":hef:" option; do
+while getopts ":hec:f:" option; do
    case $option in
       h) # display Help
          Help
          exit;;
       f) # Enter a filename
 	       filename=$OPTARG;;
+      c) # Check category
+         cat=1;
+         category=$OPTARG;;
       e) # Expand
       	 expand=1
          :;;
@@ -41,13 +47,22 @@ while getopts ":hef:" option; do
    esac
 done
 if [ $# -eq 0 ]; then
-    echo "No arguments provided, try -h"
+    echo "Error: No arguments provided, try -h"
     exit 1
 fi
 
+if [[ $expand = 1 && $category != "" ]]; then
+  echo "Error: Expand and ByCategory are not compatible with each other."
+  exit 1
+fi
+
+if [[ $cat = 1 && $category = "" ]]; then
+  echo "Error: category not specified"
+  exit 1
+fi
 
 if [ ! -f "$filename" ]; then
-    echo "The file:$filename does not exist. try -h"
+    echo "Error: The file:$filename does not exist. try -h"
     exit 1;
 fi
 
@@ -63,7 +78,7 @@ app_name=`cat audit.fvdl | grep -i "<BuildID>" | cut -d '>' -f 2 | cut -d '<' -f
 n_vulns=`cat audit.fvdl | xmllint --xpath "//*/*[local-name()='Vulnerabilities']" - | grep "<Vulnerability>" | wc -l | xargs`
 if (( $expand )); then
 	echo "Found $n_vulns vulnerabilities"
-else
+elif [[ ! $expand && ($category  -eq "") ]]; then
 	echo $n_vulns
 fi
 
@@ -114,6 +129,14 @@ done
 
 if (( $expand )); then
 	echo "The $app_name has $vuln_critical critical vulns and $vuln_high high, ones!"
+elif [ $category != "" ]; then
+	case $category in
+ 		"Critical") echo $vuln_critical;;
+   	"High") echo $vuln_high;;
+    "Medium") echo $vuln_medium;;
+    "Low") echo $vuln_low;;
+	 	\?) exit 1;;
+  esac
 fi
 if [ $vuln_critical -gt 0 ] ||  [ $vuln_high -gt 0 ] 
    then
@@ -127,3 +150,5 @@ if [ $vuln_critical -gt 0 ] ||  [ $vuln_high -gt 0 ]
 	   fi
 	   exit 0;
 fi
+
+
